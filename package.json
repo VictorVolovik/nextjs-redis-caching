@@ -12,9 +12,11 @@
   "author": "Victor Volovik",
   "license": "ISC",
   "dependencies": {
+    "bluebird": "^3.7.2",
     "next": "^10.0.5",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "redis": "^3.0.2"
   },
   "devDependencies": {
     "react-uuid": "^1.0.2"

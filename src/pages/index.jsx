@@ -1,6 +1,10 @@
+import bluebird from 'bluebird';
 import uuid from 'react-uuid';
+import redis from 'redis';
 
 const fetchData = async (url) => {
+  console.log("Fetching data...");
+
   try {
     const query = await fetch(url);
     return await query.json();
@@ -10,7 +14,21 @@ const fetchData = async (url) => {
 }
 
 export const getStaticProps = async () => {
-  const data = await fetchData('https://www.healthcare.gov/api/articles.json');
+  bluebird.promisifyAll(redis.RedisClient.prototype);
+  const cache = redis.createClient();
+  let data = {};
+
+  await cache.existsAsync("articles").then(async reply => {
+    if (reply !== 1) { // cache miss => need to fetch data
+      console.log("MISS");
+      data = await fetchData('https://www.healthcare.gov/api/articles.json');
+      await cache.set('articles', JSON.stringify(data));
+    } else { // cache hit => get data from redis
+      console.log("HIT")
+      data = JSON.parse(await cache.getAsync('articles'));
+    }
+  })
+
   const articles = data?.articles || [];
 
   return {
