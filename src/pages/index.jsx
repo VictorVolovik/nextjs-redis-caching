@@ -1,44 +1,57 @@
 import uuid from 'react-uuid';
 
-const fetchData = async () => {
-
+const fetchData = async (url) => {
+  try {
+    const query = await fetch(url);
+    return await query.json();
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 export const getStaticProps = async () => {
+  const data = await fetchData('https://www.healthcare.gov/api/articles.json');
+  const articles = data?.articles || [];
+
   return {
-    props: {},
+    props: {
+      articles,
+    },
   };
 };
 
-const Home = () => (
+const Home = ({ articles }) => (
   <article>
     <h1>HealthCare.gov Articles</h1>
-    <table>
-      <thead>
-        <tr>
-          <th>Language</th>
-          <th>Article</th>
-          <th>Date</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>en</td>
-          <td><a href="#" target="_blank">Article's title 1</a></td>
-          <td>2020-04-10 00:00:00 -0400</td>
-        </tr>
-        <tr>
-          <td>es</td>
-          <td><a href="#" target="_blank">Article's title 2</a></td>
-          <td>2020-04-10 00:00:00 -0400</td>
-        </tr>
-        <tr>
-          <td>en</td>
-          <td><a href="#" target="_blank">Article's title 3</a></td>
-          <td>2020-04-10 00:00:00 -0400</td>
-        </tr>
-      </tbody>
-    </table>
+    {articles && articles.length > 0 && (
+      <table>
+        <thead>
+          <tr>
+            <th>Language</th>
+            <th>Article</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {articles.map(el => (
+            <tr key={uuid()}>
+              <td>{el.lang}</td>
+              <td>
+                <a
+                  href={'https://www.healthcare.gov' + el.url}
+                  target="_blank"
+                >
+                  {el.title}
+                </a>
+              </td>
+              <td>
+                {el.date}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )}
   </article>
 );
 
