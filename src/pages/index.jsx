@@ -2,6 +2,8 @@ import bluebird from 'bluebird';
 import uuid from 'react-uuid';
 import redis from 'redis';
 
+const CASHE_LIFETIME = 60 * 5 // 5 minutes
+
 const fetchData = async (url) => {
   console.log("Fetching data...");
 
@@ -22,7 +24,7 @@ export const getStaticProps = async () => {
     if (reply !== 1) { // cache miss => need to fetch data
       console.log("MISS");
       data = await fetchData('https://www.healthcare.gov/api/articles.json');
-      await cache.set('articles', JSON.stringify(data));
+      await cache.set('articles', JSON.stringify(data), "EX", CASHE_LIFETIME);
     } else { // cache hit => get data from redis
       console.log("HIT")
       data = JSON.parse(await cache.getAsync('articles'));
