@@ -12,20 +12,19 @@ Redis >= 6
 
 1. Install dependencies
 
-```bash
-npm install
-```
+   ```bash
+   npm install
+   ```
 
-2. Start project in dev mode
+1. Start project in dev mode
 
-```bash
-npm run dev
-```
+   ```bash
+   npm run dev
+   ```
 
-3. For production verion use
+1. For production verion use
 
-```bash
-npm run build && npm start
+   ```bash
+   npm run build && npm start
 
-```
-
+   ```
